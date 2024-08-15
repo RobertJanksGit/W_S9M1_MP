@@ -69,13 +69,18 @@ describe("Auth component", () => {
   });
   test('[4] Submitting an empty form shows "Invalid Credentials" message', async () => {
     // ✨ submit an empty form
+    await user.click(loginBtn);
+
     // ✨ assert that the "Invalid Credentials" message eventually is visible
-    expect(true).toBe(false); // DELETE
+    expect(await screen.findByText("Invalid Credentials")).toBeVisible();
   });
   test('[5] Submitting incorrect credentials shows "Invalid Credentials" message', async () => {
     // ✨ type whatever username and password and submit form
+    await user.type(userInput, "gabe");
+    await user.type(passInput, "password1234");
+    await user.click(loginBtn);
     // ✨ assert that the "Invalid Credentials" message eventually is visible
-    expect(true).toBe(false); // DELETE
+    expect(await screen.findByText("Invalid Credentials")).toBeVisible();
   });
   for (const usr of registeredUsers) {
     test(`[6.${usr.id}] Logging in ${usr.username} makes the following elements render:
@@ -83,18 +88,35 @@ describe("Auth component", () => {
         - correct user info (ID, username, birth date)
         - logout button`, async () => {
       // ✨ type valid credentials and submit form
+      await user.type(userInput, usr.username);
+      await user.type(passInput, usr.password);
+      await user.click(loginBtn);
       // ✨ assert that the correct welcome message is eventually visible
-      // ✨ assert that the correct user info appears is eventually visible
-      // ✨ assert that the logout button appears
-      expect(true).toBe(false); // DELETE
+      await waitFor(() => {
+        expect(screen.getByText(`Welcome back, ${usr.username}. We LOVE you!`));
+        // ✨ assert that the correct user info appears is eventually visible
+        expect(
+          screen.getByText(
+            `ID: ${usr.id}, Username: ${usr.username}, Born: ${usr.born}`
+          )
+        );
+        // ✨ assert that the logout button appears
+        expect(screen.getByText("Logout")).toBeVisible();
+      });
     });
   }
   test("[7] Logging out a logged-in user displays goodbye message and renders form", async () => {
     // ✨ type valid credentials and submit
+    await user.type(userInput, "Shakira");
+    await user.type(passInput, "Suerte1977%");
+    await user.click(loginBtn);
     // ✨ await the welcome message
+    await screen.findByText("Welcome back, Shakira. We LOVE you!");
     // ✨ click on the logout button (grab it by its test id)
+    await user.click(screen.getByTestId("logoutBtn"));
     // ✨ assert that the goodbye message is eventually visible in the DOM
+    expect(await screen.findByText("Bye! Please, come back soon."));
     // ✨ assert that the form is visible in the DOM (select it by its test id)
-    expect(true).toBe(false); // DELETE
+    expect(await screen.findByTestId("loginForm")).toBeVisible();
   });
 });
