@@ -39,14 +39,14 @@ describe("Auth component", () => {
 
   // 👇 START WORKING HERE
   test("[1] Inputs acquire the correct values when typed on", async () => {
-    // Type some text in the username input
+    // ✨ Type some text in the username input
     await user.type(userInput, "gabe");
-    // Assert that the input has the value entered
+    // ✨ Assert that the input has the value entered
     expect(userInput).toHaveValue("gabe");
 
-    // Type some text in the password input
+    // ✨ Type some text in the password input
     await user.type(passInput, "password1234");
-    // Assert that the input has the value entered
+    // ✨ Assert that the input has the value entered
     expect(passInput).toHaveValue("password1234");
   });
   test('[2] Submitting form clicking button shows "Please wait..." message', async () => {
@@ -56,14 +56,16 @@ describe("Auth component", () => {
     // ✨ click the Login button
     await user.click(loginBtn);
     // ✨ assert that the "Please wait..." message is visible in the DOM
-    const pleaseWaitMessage = await screen.findByText(/Please wait.../i);
-    expect(pleaseWaitMessage).toBeInTheDocument();
+    expect(screen.getByText("Please wait...")).toBeVisible();
   });
   test('[3] Submitting form typing [ENTER] shows "Please wait..." message', async () => {
     // ✨ type whatever values in username and password inputs
+    await user.type(userInput, "gabe");
+    await user.type(passInput, "password1234");
     // ✨ hit the [ENTER] key on the keyboard
+    await user.keyboard("[enter]");
     // ✨ assert that the "Please wait..." message is visible in the DOM
-    expect(true).toBe(false); // DELETE
+    expect(screen.getByText("Please wait...")).toBeVisible();
   });
   test('[4] Submitting an empty form shows "Invalid Credentials" message', async () => {
     // ✨ submit an empty form
